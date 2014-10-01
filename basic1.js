@@ -1,6 +1,27 @@
 var ncbi = require('bionode-ncbi');
 var cy = require('cytoscape');
+var _ = require('underscore');
 
-ncbi.search('gene', 'brca1 AND species[human]').on('data', console.log);
+
+var query = 'brca1[Gene/Protein Name] AND "Homo sapiens"[Organism] AND alive[property]';
+var resultArray = [];
+
+var filterResults = function(resultList) {
+  _.each(resultList, function(res) {
+    console.log(res.uid + ' = ' + res.name);
+  });
+}
+
+
+// Run the workflow:
+ncbi.search('gene', query)
+  .on('data', function (data) {
+    resultArray.push(data);
+  })
+  .on('end', function() {
+    console.log('Number of hits = ' + resultArray.length);
+    filterResults(resultArray);
+  });
+
 
 
